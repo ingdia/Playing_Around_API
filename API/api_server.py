@@ -4,9 +4,9 @@ import json
 import base64
 import os
 
-# ------------------------
+
 # Load Transactions from JSON file
-# ------------------------
+
 DATA_FILE = os.path.join(os.path.dirname(__file__), '..', 'examples', 'json_schemas.json')
 
 if os.path.exists(DATA_FILE):
@@ -19,9 +19,8 @@ else:
 TRANSACTIONS_DICT = {t['id']: t for t in TRANSACTIONS_LIST}
 NEXT_ID = max(TRANSACTIONS_DICT.keys()) + 1 if TRANSACTIONS_DICT else 1
 
-# ------------------------
+
 # Basic Authentication
-# ------------------------
 USERNAME = "admin"
 PASSWORD = "secret"
 AUTH_STRING = base64.b64encode(f"{USERNAME}:{PASSWORD}".encode()).decode()
@@ -33,9 +32,9 @@ def authenticate(headers):
     client_auth = auth_header.split(' ')[1]
     return client_auth == AUTH_STRING
 
-# ------------------------
+
 # Request Handler
-# ------------------------
+
 class MoMoAPIHandler(BaseHTTPRequestHandler):
 
     def _send_response(self, status, data=None):
@@ -51,7 +50,7 @@ class MoMoAPIHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b'{"error":"Unauthorized"}')
 
-    # -------------------- GET --------------------
+    # -------------------- get method --------------------
     def do_GET(self):
         if not authenticate(self.headers):
             self._unauthorized()
@@ -74,7 +73,7 @@ class MoMoAPIHandler(BaseHTTPRequestHandler):
         else:
             self._send_response(404, {"error": "Endpoint not found"})
 
-    # -------------------- POST --------------------
+    #post method 
     def do_POST(self):
         if not authenticate(self.headers):
             self._unauthorized()
@@ -105,7 +104,7 @@ class MoMoAPIHandler(BaseHTTPRequestHandler):
         else:
             self._send_response(404, {"error": "Endpoint not found"})
 
-    # -------------------- PUT --------------------
+    # PUT
     def do_PUT(self):
         if not authenticate(self.headers):
             self._unauthorized()
@@ -170,9 +169,9 @@ class MoMoAPIHandler(BaseHTTPRequestHandler):
         else:
             self._send_response(404, {"error": "Endpoint not found"})
 
-# ------------------------
+
 # Start Server
-# ------------------------
+
 def run(port=8080):
     server = HTTPServer(('', port), MoMoAPIHandler)
     print(f" Server running on http://localhost:{port}")
